@@ -1,7 +1,7 @@
-var Likes = require('../models/like');
+const Likes = require('../models/like');
 
 module.exports = function(app) {
-    
+
     app.post('/api/likes/:lid/song/:song/address/:ip', (req, res) => {
         const like_id = req.params.lid;
         const song_name = req.params.song;
@@ -54,9 +54,4 @@ module.exports = function(app) {
           }
         });
       });
-    
-    
-    
-    
-    
 }
