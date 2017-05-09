@@ -6,20 +6,34 @@ const Like = require('../models/like');
 module.exports = function(app) {
 
   // Get RealTime information
-  app.get('/realtime/radioInfo', (req, res) => {
+  app.get('/realtime/song', (req, res) => {
     request('http://52.67.181.102:8000/stats?sid=1&json=1', function(error, response) {
       if (error) {
         res.status(500).send(error);
       } else {
-        const song = response.body.songtitle;
-        
+        const song = JSON.parse(response.body).songtitle;
+        res.status(200).json(song);
       }
     });
   });
 
+  app.get('/realtime/getListenersInfo', (req,res) => {
+
+    ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
+    function(err,record){
+      if(err){
+        res.status(500).send(err);
+      }else{
+        res.status(200).send(record);
+
+      }
+
+    });
+
+  });
 
   // Get Radio Info
-  app.get('/listeners/getRadioInfo', (req, res) => {
+  app.get('/realtime/getRadioInfo', (req, res) => {
     request('http://52.67.181.102:8000/stats?sid=1&json=1', function(error, response) {
       if (error) {
         res.status(500).send(error);

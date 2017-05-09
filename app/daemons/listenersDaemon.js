@@ -48,4 +48,4 @@ function listenersDaemon() {
 
 setInterval(function () {
   listenersDaemon();
-}, 60000);
+}, 10000);
