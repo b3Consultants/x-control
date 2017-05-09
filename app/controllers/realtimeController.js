@@ -1,8 +1,22 @@
 const request = require('request');
 const useragent = require('express-useragent');
 const ListenersInfo = require('../models/listenersInfo');
+const Like = require('../models/like');
 
 module.exports = function(app) {
+
+  // Get RealTime information
+  app.get('/realtime/radioInfo', (req, res) => {
+    request('http://52.67.181.102:8000/stats?sid=1&json=1', function(error, response) {
+      if (error) {
+        res.status(500).send(error);
+      } else {
+        const song = response.body.songtitle;
+        
+      }
+    });
+  });
+
 
   // Get Radio Info
   app.get('/listeners/getRadioInfo', (req, res) => {

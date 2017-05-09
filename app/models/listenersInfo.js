@@ -1,9 +1,6 @@
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('ListenersInfo', {
-    listeners: {
-        type: Number
-    },
     desktop: {
         type: Number
     },
@@ -15,5 +12,8 @@ module.exports = mongoose.model('ListenersInfo', {
     },
     other:{
         type:Number
+    },
+    listener: {
+        type: Number
     }
 })
