@@ -6,30 +6,35 @@ const Like = require('../models/like');
 module.exports = function(app) {
 
   // Get RealTime information
-  app.get('/realtime/song', (req, res) => {
-    request('http://52.67.181.102:8000/stats?sid=1&json=1', function(error, response) {
+  // TODO HACER UN ARCHIVO DE CONFIGURACION PARA RUTAS IP, SI TENEMOS QUE CAMBIAR LA RADIO ES MAS FACIL NIE
+  app.get('/realtime/getRadioActualState', (req, res) => {
+    request('http://52.67.181.102:8000/stats?sid=1&json=1', (error, response) => {
       if (error) {
         res.status(500).send(error);
       } else {
         const song = JSON.parse(response.body).songtitle;
-        res.status(200).json(song);
+        ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
+        (err,record) => {
+          if(err){
+            res.status(500).send(err);
+          }else{
+            const response_json = {"song": song,"mobile": record.mobile,"desktop": record.desktop,"listeners":record.listener,"others":record.other}
+            res.status(200).json(response_json);
+          }
+        });
       }
     });
   });
 
   app.get('/realtime/getListenersInfo', (req,res) => {
-
     ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
-    function(err,record){
+    (err,record) => {
       if(err){
         res.status(500).send(err);
       }else{
         res.status(200).send(record);
-
       }
-
     });
-
   });
 
   // Get Radio Info
@@ -43,46 +48,4 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/listeners/getListenersInfo2', (req, res) => {
-    const request_options = {
-      url: 'http://52.67.181.102:8000/admin.cgi?mode=viewjson&page=3&sid=1',
-      auth: {
-        user: 'admin',
-        pass: 'd798fd798f'
-      }
-    };
-    request.get(request_options, function(error, response) {
-      if (error) {
-        res.status(500).send(error);
-      } else {
-        var mobile = 0;
-        var desktop = 0;
-        var others = 0;
-        const listeners = JSON.parse(response.body);
-        for (var i = 0; i < listeners.length; i++) {
-          ua = useragent.parse(listeners[i].useragent);
-          if (ua.isMobile || ua.isTablet) {
-            mobile++;
-          } else if (ua.isDesktop) {
-            desktop++;
-          } else {
-            others++;
-          }
-        }
-        ListenersInfo.create({
-          'timestamp': new Date(),
-          'mobile': mobile,
-          'desktop': desktop,
-          'other': others,
-          'listener': listeners.length
-        }, (err, like) => {
-          if (err) {
-            res.status(500).send(err);
-          } else {
-            res.status(200).send("Enhorabuena!");
-          }
-        });
-      }
-    });
-  });
 }
