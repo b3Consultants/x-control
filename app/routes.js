@@ -8,8 +8,7 @@ module.exports = function(app) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
   });
-
-  require('./controllers/likeController.js')(app);
-  require('./controllers/listenersController.js')(app);
-
+  
+  require('./controllers/realtimeController.js')(app);
+  require('./daemons/listenersDaemon.js');
 };
