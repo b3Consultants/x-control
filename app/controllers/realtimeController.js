@@ -12,14 +12,17 @@ module.exports = function(app) {
       if (error) {
         res.status(500).send(error);
       } else {
-        console.log(response.body);
+
         const song = JSON.parse(response.body).songtitle;
+        const avrgTime= JSON.parse(response.body).averagetime;
+        const peaklisteners= JSON.parse(response.body).peaklisteners;
+        
         ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
         (err,record) => {
           if(err){
             res.status(500).send(err);
           }else{
-            const response_json = {"song": song,"mobile": record.mobile,"desktop": record.desktop,"listeners":record.listener,"others":record.other}
+            const response_json = {"song": song,"mobile": record.mobile,"desktop": record.desktop,"listeners":record.listener,"others":record.other,"averageTime": avrgTime,"peak":peaklisteners}
             res.status(200).json(response_json);
           }
         });
