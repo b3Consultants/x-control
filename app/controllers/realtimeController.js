@@ -12,6 +12,7 @@ module.exports = function(app) {
       if (error) {
         res.status(500).send(error);
       } else {
+        console.log(response.body);
         const song = JSON.parse(response.body).songtitle;
         ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
         (err,record) => {
@@ -25,7 +26,40 @@ module.exports = function(app) {
       }
     });
   });
+  app.get('/realtime/ListenersHistory', (req,res) => {
+    ListenersInfo.find({},{},  {sort:{
+        timestamp: 1 //Sort by Date Added DESC
+    }},(err,info)=> {
+      if(err){
+        res.status(500).send(err);
+      }else{
+        let dates=[];
+        let mobile=[];
+        let desktop=[];
+        let others=[];
 
+        for (var i = 0; i < info.length; i++) {
+          dates.push( new Date(info[i].timestamp));
+          mobile.push(info[i].mobile);
+          desktop.push(info[i].desktop);
+          others.push(info[i].other);
+        }
+
+        const response = {
+          dates: dates,
+          mobile: mobile,
+          desktop: desktop,
+          others: others
+        }
+        res.status(200).send(response);
+
+      }
+
+    })
+
+
+
+  });
   app.get('/realtime/getListenersInfo', (req,res) => {
     ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
     (err,record) => {

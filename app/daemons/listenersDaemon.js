@@ -13,7 +13,7 @@ function listenersDaemon() {
   };
   request.get(request_options, function(error, response) {
     if (error) {
-      res.status(500).send(error);
+      
     } else {
       var mobile = 0;
       var desktop = 0;
