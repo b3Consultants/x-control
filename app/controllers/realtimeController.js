@@ -16,7 +16,7 @@ module.exports = function(app) {
         const song = JSON.parse(response.body).songtitle;
         const avrgTime= JSON.parse(response.body).averagetime;
         const peaklisteners= JSON.parse(response.body).peaklisteners;
-        
+
         ListenersInfo.findOne({}, {}, { sort: { 'timestamp' : -1 } },
         (err,record) => {
           if(err){
@@ -26,6 +26,26 @@ module.exports = function(app) {
             res.status(200).json(response_json);
           }
         });
+      }
+    });
+  });
+  app.get('/likes', (req, res) => {
+    request('http://ec2-52-90-229-1.compute-1.amazonaws.com:8080/api/likes/', function(error,response){
+      if (error){
+        res.status(500).send(error);
+      } else {
+        res.status(200).json(JSON.parse(response.body));
+      }
+    });
+  });
+
+  app.get('/likes/:song', (req, res)=> {
+    const song = req.params.song;
+    request('http://ec2-52-90-229-1.compute-1.amazonaws.com:8080/api/likes/' + song, function(error, response){
+      if (error){
+        res.status(500).send(error);
+      } else {
+        res.status(200).json(JSON.parse(response.body));
       }
     });
   });
